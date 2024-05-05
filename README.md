@@ -2,6 +2,16 @@
 
 fn is a Go package that provides a set of functional programming tools for Go. It is inspired by the functional programming features of languages like Haskell, Scala, Rust and JavaScript.
 
+![CI on main](https://github.com/abiiranathan/fn/actions/workflows/go.yml/badge.svg)
+
+<div style="display: flex;">
+
+[![Go Report Card](https://goreportcard.com/badge/github.com/abiiranathan/fn)](https://goreportcard.com/report/github.com/abiiranathan/fn)
+[![Go Reference](https://pkg.go.dev/badge/github.com/abiiranathan/fn.svg)](https://pkg.go.dev/github.com/abiiranathan/fn)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+</div>
+
 ## Installation
 
 ```bash
