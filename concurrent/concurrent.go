@@ -5,17 +5,14 @@ import (
 	"sync"
 )
 
-// Task is a function that returns an error.
-type Task func() error
-
 // Parallel runs the given tasks in parallel with a maximum number of workers.
 // It returns the first error encountered, or nil if all tasks completed successfully.
 // If stopOnError is true, it returns the first error encountered and stops processing.
 //
 // The implementation uses a worker pool to limit the number of concurrent tasks.
 // It supports context cancellation and deadlines to stop processing early.
-func Parallel(ctx context.Context, tasks []Task, maxWorkers int, stopOnError ...bool) error {
-	tasksCh := make(chan Task, len(tasks))
+func Parallel(ctx context.Context, tasks []func() error, maxWorkers int, stopOnError ...bool) error {
+	tasksCh := make(chan func() error, len(tasks))
 	resultsCh := make(chan error, len(tasks))
 	stopOnErr := false
 	if len(stopOnError) > 0 {
@@ -80,7 +77,7 @@ loop:
 }
 
 // worker runs tasks from tasks channel and sends the result to results channel.
-func worker(tasks <-chan Task, results chan<- error) {
+func worker(tasks <-chan func() error, results chan<- error) {
 	for task := range tasks {
 		results <- task()
 	}

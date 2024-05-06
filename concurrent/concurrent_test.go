@@ -14,7 +14,7 @@ import (
 func TestParallel(t *testing.T) {
 	type args struct {
 		ctx         context.Context
-		tasks       []Task
+		tasks       []func() error
 		maxWorkers  int
 		stopOnError []bool
 	}
@@ -28,7 +28,7 @@ func TestParallel(t *testing.T) {
 			name: "Test 1",
 			args: args{
 				ctx:        context.Background(),
-				tasks:      []Task{func() error { return nil }},
+				tasks:      []func() error{func() error { return nil }},
 				maxWorkers: 1,
 			},
 			wantErr: false,
@@ -37,7 +37,7 @@ func TestParallel(t *testing.T) {
 			name: "Test 2",
 			args: args{
 				ctx:        context.Background(),
-				tasks:      []Task{func() error { return nil }},
+				tasks:      []func() error{func() error { return nil }},
 				maxWorkers: 1,
 			},
 			wantErr: false,
@@ -46,7 +46,7 @@ func TestParallel(t *testing.T) {
 			name: "Test 3",
 			args: args{
 				ctx:         context.Background(),
-				tasks:       []Task{func() error { return fmt.Errorf("request timeout") }},
+				tasks:       []func() error{func() error { return fmt.Errorf("request timeout") }},
 				maxWorkers:  1,
 				stopOnError: []bool{true},
 			},
@@ -56,7 +56,7 @@ func TestParallel(t *testing.T) {
 			name: "Test 4",
 			args: args{
 				ctx: context.Background(),
-				tasks: []Task{
+				tasks: []func() error{
 					func() error { return nil },
 					func() error { fmt.Println("task 4 - 2"); return nil },
 					func() error { fmt.Println("Task 4 - 3"); return nil },
@@ -67,6 +67,7 @@ func TestParallel(t *testing.T) {
 			wantErr: false,
 		},
 	}
+
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			if err := Parallel(tt.args.ctx, tt.args.tasks, tt.args.maxWorkers, tt.args.stopOnError...); (err != nil) != tt.wantErr {
@@ -80,7 +81,7 @@ func TestContextCancellation(t *testing.T) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*2)
 	defer cancel()
 
-	tasks := []Task{
+	tasks := []func() error{
 		func() error {
 			return nil
 		},
@@ -106,7 +107,7 @@ func TestParallelSum(t *testing.T) {
 	var arr = []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
 
 	chunks := fn.Chunk(arr, 3)
-	tasks := make([]Task, 0, len(chunks))
+	tasks := make([]func() error, 0, len(chunks))
 	for _, chunk := range chunks {
 		chunk := chunk
 		tasks = append(tasks, func() error {
