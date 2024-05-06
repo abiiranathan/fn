@@ -28,6 +28,20 @@ func TestMap(t *testing.T) {
 	}
 }
 
+func TestForEach(t *testing.T) {
+	s := []int{1, 2, 3, 4, 5}
+	doubled := make([]int, 0, len(s))
+	f := func(v int) {
+		doubled = append(doubled, v*2)
+	}
+	fn.ForEach(s, f)
+
+	want := []int{2, 4, 6, 8, 10}
+	if !reflect.DeepEqual(want, doubled) {
+		t.Errorf("want %v, got %v", want, doubled)
+	}
+}
+
 func TestReduce(t *testing.T) {
 	s := []int{1, 2, 3, 4, 5}
 	f := func(acc, v int) int { return acc + v }

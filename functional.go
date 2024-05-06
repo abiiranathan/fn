@@ -233,6 +233,13 @@ func ZipWithIndex[T, U any](s []T, fn func(int, T) U) []U {
 	return result
 }
 
+// ForEach applies the function fn to each element of s.
+func ForEach[T any](s []T, fn func(T)) {
+	for _, v := range s {
+		fn(v)
+	}
+}
+
 // RotateLeft rotates the elements of s to the left by positions.
 // It does nothing if s has fewer than 2 elements.
 // This is useful for working with circular buffers.
@@ -257,5 +264,4 @@ func RotateRight[T any](s []T, positions int) {
 	Reverse(s)
 	Reverse(s[:positions])
 	Reverse(s[positions:])
-
 }
